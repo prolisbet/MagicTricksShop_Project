@@ -8,6 +8,51 @@
 
 {% block content %}
 
-    <h1>Регистрация</h1>
+    <div class="main-info container mt-5">
+        <h2 class="mb-4">Регистрация магического адепта</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.name.id }}">Имя</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="text-danger">
+                        {{ form.name.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.email.id }}">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="text-danger">
+                        {{ form.email.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.phone.id }}">Телефон (с кодом страны)</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="text-danger">
+                        {{ form.phone.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.address.id }}">Адрес</label>
+                {{ form.address }}
+                {% if form.address.errors %}
+                    <div class="text-danger">
+                        {{ form.address.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Погрузиться в магию</button>
+            <a href="{% url 'shopUsers:login' %}" class="btn btn-secondary">Вы уже магический адепт?</a>
+        </form>
+        <p class="text-danger">{{error}}</p>
+    </div>
 
 {% endblock %}

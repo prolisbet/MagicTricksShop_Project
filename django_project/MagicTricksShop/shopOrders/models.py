@@ -1,6 +1,6 @@
 from django.db import models
-from ..shopUsers.models import User
-from ..shopGoods.models import Product
+from shopUsers.models import User
+from shopGoods.models import Product
 
 
 # Create your models here.
@@ -29,6 +29,7 @@ class Order(models.Model):
         default='pending'
     )
     order_date = models.DateTimeField('Дата заказа', auto_now_add=True)
+    order_address = models.TextField('Адрес доставки', null=True, blank=True)
 
     def __str__(self):
         return f'Заказ {self.id} от {self.user.name}'

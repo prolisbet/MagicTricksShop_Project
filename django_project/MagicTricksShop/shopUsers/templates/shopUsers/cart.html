@@ -1,13 +1,35 @@
 {% extends 'shopGoods/layout.html' %}
 
 {% block title %}
-
     Корзина
-
 {% endblock %}
 
 {% block content %}
-
-    <h1>Корзина</h1>
-
+    <div class="container mt-5">
+        <h2>Корзина с магией</h2>
+        {% if products_with_quantity %}
+            <ul class="list-group mb-3">
+                {% for item in products_with_quantity %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ item.product.name }} - {{ item.quantity }} шт.
+                        <span>{{ item.product.price|floatformat:2 }} ₽</span>
+                        <form action="{% url 'shopGoods:remove_from_cart' item.product.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="d-flex justify-content-between">
+                <h4>Итоговая сумма: {{ total_price|floatformat:2 }} ₽</h4>
+                {% if request.session.user_id %}
+                    <a href="{% url 'shopOrders:order' %}" class="btn btn-primary">Оформить заказ</a>
+                {% else %}
+                    <a href="{% url 'shopUsers:login' %}" class="btn btn-outline-secondary">Авторизоваться</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="mt-4">Ваша корзина пуста.</p>
+        {% endif %}
+    </div>
 {% endblock %}

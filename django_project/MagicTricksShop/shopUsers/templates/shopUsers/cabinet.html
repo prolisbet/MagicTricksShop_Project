@@ -8,6 +8,19 @@
 
 {% block content %}
 
-    <h1>Личный кабинет</h1>
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h2 class="mb-0">Личный кабинет магического адепта</h2>
+        </div>
+        <div class="card-body">
+            <div class="button-group d-flex justify-content-between">
+                <a href="{% url 'shopOrders:history' %}" class="btn btn-outline-primary btn-lg">История заказов</a>
+                <a href="{% url 'shopUsers:edit_profile' %}" class="btn btn-outline-secondary btn-lg">Редактировать данные профиля</a>
+                <a href="{% url 'shopUsers:logout' %}" class="btn btn-outline-danger btn-lg">Выйти из магии</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

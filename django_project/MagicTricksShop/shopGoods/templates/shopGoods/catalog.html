@@ -1,13 +1,66 @@
 {% extends 'shopGoods/layout.html' %}
 
+{% load static %}
+
 {% block title %}
-
     Каталог товаров
-
 {% endblock %}
 
 {% block content %}
+    <div class="catalog-container">
+        <h2 class="catalog-title">Каталог магических товаров</h2>
+        <div class="products-grid">
+            {% if products %}
+                {% for product in products %}
+                    <div class="product-item">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img src="{% static 'shopGoods/img/logo.png' %}" alt="Изображение отсутствует">
+                        {% endif %}
+                        <h2>{{ product.name }}</h2>
+                        <p>{{ product.description }}</p>
+                        <h3>{{ product.price }} руб.</h3>
 
-    <h1>Каталог товаров</h1>
+                        <!-- Отображение рейтинга -->
+                        <div class="rating">
+                            {% with reviews=product.review_set.all %}
+                                {% if reviews %}
+                                    {% for _ in reviews.first.rating %}
+                                        ★
+                                    {% endfor %}
+                                    ({{ reviews.count }} отзывов)
+                                {% else %}
+                                    Нет отзывов
+                                {% endif %}
+                            {% endwith %}
+                        </div>
 
+                        <!-- Кнопка добавления в корзину -->
+                        <form action="{% url 'shopGoods:add_to_cart' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" name="product_id" value="{{ product.id }}">
+                                {% if product.id in user_ordered_products %}
+                                    Заказать снова
+                                {% else %}
+                                    Заказать
+                                {% endif %}
+                            </button>
+                        </form>
+
+                        <!-- Сообщение об успешном добавлении в корзину -->
+                        {% if added_to_cart %}
+                            <div class="alert alert-success">
+                                Товар добавлен в корзину!
+                            </div>
+                        {% endif %}
+
+                        <a href="{% url 'shopGoods:product_detail' product.id %}" class="detail-link">Подробнее</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Нет доступных товаров.</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

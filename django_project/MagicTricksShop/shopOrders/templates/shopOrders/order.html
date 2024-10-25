@@ -1,13 +1,36 @@
 {% extends 'shopGoods/layout.html' %}
-
 {% block title %}
-
     Оформление заказа
-
 {% endblock %}
 
 {% block content %}
+    <div class="main-info container mt-5">
+        <h2 class="mb-4">Оформление заказа</h2>
 
-    <h1>Оформление заказа</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ order_form.as_p }}
 
+            <h4>Товары в заказе:</h4>
+<!--            <ul>-->
+<!--                {% for product in products_with_quantity %}-->
+<!--                    {% with product.quantity as quantity %}-->
+<!--                        <li>{{ product.name }} - {{ quantity }} шт.</li>-->
+<!--                    {% endwith %}-->
+<!--                {% endfor %}-->
+<!--            </ul>-->
+            <ul class="list-group mb-3">
+                {% for item in products_with_quantity %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ item.product.name }} - {{ item.quantity }} шт.
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <h4>Итоговая сумма: {{ total_price|floatformat:2 }} ₽</h4>
+
+            <button type="submit" class="btn btn-primary">Отправить заказ</button>
+        </form>
+    </div>
 {% endblock %}
+

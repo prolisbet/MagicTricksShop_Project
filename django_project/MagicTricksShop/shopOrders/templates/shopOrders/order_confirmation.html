@@ -1,0 +1,25 @@
+{% extends 'shopGoods/layout.html' %}
+
+{% block title %}
+
+    Заказ оформлен
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="container mt-5">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h2 class="mb-0">Заказ успешно оформлен!</h2>
+            </div>
+            <div class="card-body">
+                <p class="mb-4">Спасибо за ваш заказ. Мы свяжемся с вами в ближайшее время для подтверждения деталей.</p>
+                <div class="button-group d-flex justify-content-center">
+                    <a href="{% url 'shopGoods:catalog' %}" class="btn btn-outline-primary btn-lg">Вернуться в магазин</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

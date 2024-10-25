@@ -1,0 +1,17 @@
+{% extends 'shopGoods/layout.html' %}
+
+{% block title %}
+    Редактировать профиль
+{% endblock %}
+
+{% block content %}
+    <h2>Редактирование профиля</h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        <a href="{% url 'shopUsers:cabinet' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+{% endblock %}

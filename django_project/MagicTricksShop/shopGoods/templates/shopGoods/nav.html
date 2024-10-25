@@ -1,6 +1,18 @@
 <ul>
-    <li><a href="{% url 'shopGoods/index' %}">Главная страница</a></li>
-    <li><a href="{% url 'shopGoods/catalog' %}">Каталог товаров</a></li>
-    <li><a href="{% url 'shopUsers/cabinet.html' %}">Личный кабинет</a></li>
-    <li><a href="{% url 'shopUsers/cart.html' %}">Корзина</a></li>
+    <li><a href="{% url 'shopGoods:index' %}">Главная страница</a></li>
+    <li><a href="{% url 'shopGoods:catalog' %}">Каталог товаров</a></li>
+    <li>
+        {% if request.session.user_id %}
+            <a href="{% url 'shopUsers:cabinet' %}">Личный кабинет</a>
+        {% else %}
+            <a href="{% url 'shopUsers:register' %}">Войти</a>
+        {% endif %}
+    </li>
+    <li>
+        {% if total_items > 0 %}
+            <a href="{% url 'shopUsers:cart' %}">Корзина (<span>{{ total_items }}</span>)</a>
+        {% else %}
+            <a href="{% url 'shopUsers:cart' %}">Корзина</a>
+        {% endif %}
+    </li>
 </ul>

@@ -34,4 +34,6 @@ class OrderAdmin(admin.ModelAdmin):
     actions = [generate_sales_report]
 
 
-admin.site.register(Order, OrderItem, OrderAdmin, Report)
+admin.site.register(Order, OrderAdmin)
+admin.site.register(OrderItem)
+admin.site.register(Report)

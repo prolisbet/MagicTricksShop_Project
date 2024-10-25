@@ -1,8 +1,10 @@
 from django.urls import path
 from . import views
 
+app_name = 'shopOrders'
+
 urlpatterns = [
     path('', views.order, name='order'),
     path('history', views.history, name='history'),
-    path('reorder', views.reorder, name='reorder'),  # не нужна?
+    path('order_confirmation', views.order_confirmation, name='order_confirmation'),
 ]

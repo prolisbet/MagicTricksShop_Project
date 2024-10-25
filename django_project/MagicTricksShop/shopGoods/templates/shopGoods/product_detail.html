@@ -1,0 +1,73 @@
+{% extends 'shopGoods/layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    {{ product.name }}
+{% endblock %}
+
+{% block content %}
+    <div class="product-detail">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+            <img src="{% static 'shopGoods/img/logo.png' %}" alt="Изображение отсутствует">
+        {% endif %}
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <h3>{{ product.price }} руб.</h3>
+
+        <!-- Отображение рейтинга -->
+        <div class="rating">
+            {% if reviews %}
+                {% for _ in reviews.first.rating %}
+                    ★
+                {% endfor %}
+                ({{ reviews.count }} отзывов)
+            {% else %}
+                Нет отзывов
+            {% endif %}
+        </div>
+
+
+        <!-- Кнопка добавления в корзину -->
+        <form action="{% url 'shopGoods:add_to_cart' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" name="product_id" value="{{ product.id }}">
+                {% if product.id in user_ordered_products %}
+                    Заказать снова
+                {% else %}
+                    Заказать
+                {% endif %}
+            </button>
+        </form>
+
+        <!-- Сообщение об успешном добавлении в корзину -->
+        {% if added_to_cart %}
+            <div class="alert alert-success">
+                Товар добавлен в корзину!
+            </div>
+        {% endif %}
+
+        <!-- Отображение отзывов -->
+        <div class="reviews">
+            <h3>Отзывы:</h3>
+            {% if reviews %}
+                {% for review in reviews %}
+                    <div class="review">
+                        <p>{{ review.user.name }}:</p>
+                        <div class="stars">
+                            {% for _ in review.rating %}
+                                ★
+                            {% endfor %}
+                        </div>
+                        <p>{{ review.text }}</p>
+                        <p>{{ review.review_date }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Нет отзывов</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

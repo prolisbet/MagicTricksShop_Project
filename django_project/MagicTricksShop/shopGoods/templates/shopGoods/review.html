@@ -8,6 +8,33 @@
 
 {% block content %}
 
-    <h1>Отзыв на товар</h1>
+    <div class="main-info container mt-5">
+        <h2 class="mb-4"><strong>Оцените нашу магию</strong>><br>
+            {{ product.name }}</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="form-group">
+                {{ form.rating.label_tag }}
+                <div class="rating">
+                    {% for i in "12345" %}
+                        <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" required>
+                        <label for="star{{ i }}">&#9733;</label>
+                    {% endfor %}
+                </div>
+                {{ form.rating.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.text.label_tag }}
+                {{ form.text }}
+                {{ form.text.errors }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+        </form>
+    </div>
 
 {% endblock %}
