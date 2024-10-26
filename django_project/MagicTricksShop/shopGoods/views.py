@@ -2,8 +2,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
+from django.db.models import Avg, Count
 from .models import Product, Review
 from shopOrders.models import Order, OrderItem
+from shopUsers.models import User
+from .forms import ReviewForm
 
 
 caption = "Magic Tricks Shop"
@@ -16,16 +19,21 @@ def index(request):
 
 
 def catalog(request):
-    products = Product.objects.all()
-    user_ordered_products = []
+    products = Product.objects.all().annotate(
+        review_count=Count('review'),  # Количество отзывов на каждый продукт
+        average_rating=Avg('review__rating')  # Средний рейтинг
+    )
 
-    if request.user.is_authenticated:
-        if request.user.is_staff or request.user.is_superuser:
-            # Пользователь является администратором, предоставляем доступ к каталогу
-            user_ordered_products = []
-        else:
-            # Обычный пользователь
-            user_ordered_products = Order.objects.filter(user=request.user).values_list('product__id', flat=True)
+    user_ordered_products = set()
+
+    user_id = request.session.get('user_id')
+
+    if not request.user.is_staff or not request.user.is_superuser:
+        orders = Order.objects.filter(user_id=user_id)
+        for order in orders:
+            order_items = OrderItem.objects.filter(order_id=order.id)
+            for item in order_items:
+                user_ordered_products.add(str(item.product_id))
 
     context = {
         'caption': caption,
@@ -36,46 +44,60 @@ def catalog(request):
 
 
 def product_detail(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    user_id = request.session.get('user_id')
+    product = get_object_or_404(Product, pk=product_id)
     reviews = Review.objects.filter(product=product)
-    user_ordered_products = []
-    if request.user.is_authenticated:
-        user_ordered_products = Order.objects.filter(user=request.user).values_list('product__id', flat=True)
+    average_rating = reviews.aggregate(Avg('rating'))['rating__avg'] if reviews.exists() else 0
+    added_to_cart = False
+    if request.method == 'POST':
+        added_to_cart = True
+    user_ordered_products = OrderItem.objects.filter(order__user_id=user_id).values_list('product_id', flat=True)
+    # Вычисляем количество отзывов
+    last_digit = str(reviews.count() % 10)
+    last_two_digits = str(reviews.count() % 100)
+    if len(last_two_digits) == 1:
+        last_two_digits = '0' + last_two_digits
     context = {
         'product': product,
         'reviews': reviews,
-        'user_ordered_products': user_ordered_products
+        'average_rating': average_rating,
+        'user_ordered_products': user_ordered_products,
+        'added_to_cart': added_to_cart,
+        'last_digit': last_digit,
+        'last_two_digits': last_two_digits
     }
     return render(request, 'shopGoods/product_detail.html', context)
 
 
-@login_required
 def review(request, product_id):
+    user_id = request.session.get('user_id')
+    print(f"Current user_id in session: {user_id}")
+    if not user_id:
+        return redirect('shopUsers:login')
+
     product = get_object_or_404(Product, pk=product_id)
 
     if request.method == 'POST':
-        rating = request.POST.get('rating')
-        text = request.POST.get('text')
-
-        # Проверяем, может ли пользователь оставить отзыв на товар
-        if user_can_review(request.user, product):
-            Review.objects.create(
-                user=request.user,
+        form = ReviewForm(request.POST)
+        if form.is_valid() and user_can_review(user_id, product):
+            # Use user_id directly to prevent session conflict
+            review = Review(
                 product=product,
-                text=text,
-                rating=int(rating)
+                user_id=user_id,  # Ensure correct user is assigned
+                rating=form.cleaned_data['rating'],
+                text=form.cleaned_data['text']
             )
-            return redirect(reverse('product_detail', args=[product.id]))
+            review.save()
+            return redirect(reverse('shopGoods:product_detail', args=[product.id]))
+    else:
+        form = ReviewForm()
 
-    context = {
-        'product': product
-    }
+    context = {'product': product, 'form': form}
     return render(request, 'shopGoods/review.html', context)
 
 
-def user_can_review(user, product):
-    # Проверяем, делал ли пользователь заказ на этот товар
-    return OrderItem.objects.filter(order__user=user, product=product).exists()
+def user_can_review(user_id, product):
+    return OrderItem.objects.filter(order__user_id=user_id, product=product).exists()
 
 
 def add_to_cart(request):

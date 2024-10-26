@@ -107,27 +107,34 @@ h2 {
     background-color: #555;
 }
 
-/* Стили для рейтинга */
 .rating {
     margin: 10px 0;
-    unicode-bidi: bidi-override;
+    display: inline-flex;
+    flex-direction: row-reverse; /* Реверсируем только порядок вывода без rtl */
 }
 
 .rating input {
     display: none;
 }
 
-.rating label {
+.rating .star {
     font-size: 2em;
-    color: #FFD700;
+    color: #ccc; /* Цвет неактивной звезды */
     cursor: pointer;
 }
 
-.rating label:hover,
-.rating label:hover ~ label,
-.rating input:checked ~ label {
-    color: #FFED85;
+/* Подсветка звезд при выборе */
+.rating input:checked ~ .star,
+.rating input:checked ~ .star ~ .star {
+    color: #FFD700; /* Цвет активных звезд */
 }
+
+/* Подсветка звезд при наведении */
+.rating .star:hover,
+.rating .star:hover ~ .star {
+    color: #FFED85; /* Цвет при наведении */
+}
+
 
 /* Метка полей формы */
 label {

@@ -10,7 +10,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        # migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('shopUsers', '0001_initial'),
     ]
 
     operations = [
@@ -36,7 +37,7 @@ class Migration(migrations.Migration):
                 ('rating', models.PositiveSmallIntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')], verbose_name='Рейтинг')),
                 ('review_date', models.DateTimeField(auto_now_add=True, verbose_name='Дата')),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shopGoods.product', verbose_name='Товар')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Пользователь')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shopUsers.user', verbose_name='Пользователь')),
             ],
             options={
                 'verbose_name': 'Отзыв',

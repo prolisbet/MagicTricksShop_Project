@@ -24,23 +24,29 @@
 
                         <!-- Отображение рейтинга -->
                         <div class="rating">
-                            {% with reviews=product.review_set.all %}
-                                {% if reviews %}
-                                    {% for _ in reviews.first.rating %}
-                                        ★
-                                    {% endfor %}
-                                    ({{ reviews.count }} отзывов)
-                                {% else %}
-                                    Нет отзывов
-                                {% endif %}
-                            {% endwith %}
+                            {% for i in "12345" %}
+                                <span class="{% if forloop.counter <= product.average_rating|default:0 %}text-warning{% else %}text-muted{% endif %}">
+                                    &#9733;
+                                </span>
+                            {% endfor %}
+                            ({{ product.review_count }}
+                            {% if product.review_count == 1 %}
+                                отзыв
+                            {% elif product.review_count|divisibleby:10 and not product.review_count|divisibleby:100 %}
+                                отзывов
+                            {% elif product.review_count|divisibleby:2 or product.review_count|divisibleby:3 or product.review_count|divisibleby:4 %}
+                                отзыва
+                            {% else %}
+                                отзывов
+                            {% endif %}
+                            )
                         </div>
 
                         <!-- Кнопка добавления в корзину -->
                         <form action="{% url 'shopGoods:add_to_cart' %}" method="post">
                             {% csrf_token %}
                             <button type="submit" name="product_id" value="{{ product.id }}">
-                                {% if product.id in user_ordered_products %}
+                                {% if product.id|stringformat:"s" in user_ordered_products %}
                                     Заказать снова
                                 {% else %}
                                     Заказать

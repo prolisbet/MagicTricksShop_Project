@@ -19,16 +19,21 @@
 
         <!-- Отображение рейтинга -->
         <div class="rating">
-            {% if reviews %}
-                {% for _ in reviews.first.rating %}
-                    ★
+            {% if average_rating %}
+                {% for i in "12345" %}
+                    <span class="{% if forloop.counter <= average_rating %}text-warning{% else %}text-muted{% endif %}">&#9733;</span>
                 {% endfor %}
-                ({{ reviews.count }} отзывов)
+                {% if last_digit == "1" and last_two_digits != "11" %}
+                    ({{ reviews.count }} отзыв)
+                {% elif last_digit in "234" and last_two_digits not in "12, 13, 14" %}
+                    ({{ reviews.count }} отзыва)
+                {% else %}
+                    ({{ reviews.count }} отзывов)
+                {% endif %}
             {% else %}
                 Нет отзывов
             {% endif %}
         </div>
-
 
         <!-- Кнопка добавления в корзину -->
         <form action="{% url 'shopGoods:add_to_cart' %}" method="post">
@@ -49,16 +54,21 @@
             </div>
         {% endif %}
 
+        <!-- Кнопка оставить отзыв -->
+        {% if product.id in user_ordered_products %}
+            <a href="{% url 'shopGoods:review' product.id %}" class="btn btn-primary">Оставить отзыв</a>
+        {% endif %}
+
         <!-- Отображение отзывов -->
         <div class="reviews">
             <h3>Отзывы:</h3>
             {% if reviews %}
                 {% for review in reviews %}
                     <div class="review">
-                        <p>{{ review.user.name }}:</p>
+                        <p>{{ review.user }}:</p>
                         <div class="stars">
-                            {% for _ in review.rating %}
-                                ★
+                            {% for i in "12345" %}
+                                <span class="{% if forloop.counter <= review.rating %}text-warning{% else %}text-muted{% endif %}">&#9733;</span>
                             {% endfor %}
                         </div>
                         <p>{{ review.text }}</p>

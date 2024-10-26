@@ -85,6 +85,7 @@ def edit_profile(request):
 
 def logout(request):
     auth_logout(request)  # Завершаем сеанс пользователя
+    request.session.flush()
     return render(request, 'shopUsers/logout_success.html')
 
 

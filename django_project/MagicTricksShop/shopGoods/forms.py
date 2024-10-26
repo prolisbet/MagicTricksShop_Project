@@ -1,12 +1,12 @@
-from django.forms import ModelForm, TextInput
+from django import forms  # import ModelForm, TextInput
 from .models import Review
 
 
-class ReviewForm(ModelForm):
+class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['text', 'rating']
         widgets = {
-            'text': TextInput(attrs={'class': 'form-control', 'placeholder': 'Текст отзыва'}),
-            'rating': TextInput(attrs={'class': 'form-control', 'placeholder': 'Рейтинг отзыва'}),
+            'text': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Текст отзыва'}),
+            'rating': forms.RadioSelect(attrs={'class': 'form-control'}),
         }

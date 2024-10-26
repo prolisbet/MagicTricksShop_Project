@@ -130,4 +130,22 @@ def order_confirmation(request):
 
 
 def history(request):
-    return render(request, 'shopOrders/history.html')
+    if not request.session.get('user_id'):
+        return redirect('shopUsers:login')
+
+    user = User.objects.get(id=request.session['user_id'])
+    orders = Order.objects.filter(user=user).prefetch_related('orderitem_set__product')
+
+    # Добавляем финальную стоимость и список товаров для каждого заказа
+    for order in orders:
+        order_items = order.orderitem_set.all()
+        total_cost = sum(item.quantity * item.product.price for item in order_items)
+        for item in order_items:
+            item.total_price = item.quantity * item.product.price
+        order.total_cost = total_cost
+        order.order_items = order_items
+
+    context = {
+        'orders': orders
+    }
+    return render(request, 'shopOrders/history.html', context)
