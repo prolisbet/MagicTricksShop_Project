@@ -107,10 +107,11 @@ h2 {
     background-color: #555;
 }
 
+
+
 .rating {
     margin: 10px 0;
     display: inline-flex;
-    flex-direction: row-reverse; /* Реверсируем только порядок вывода без rtl */
 }
 
 .rating input {
@@ -232,11 +233,6 @@ label {
 .detail-link:hover {
     text-decoration: underline;
 }
-/*.main-info {*/
-/*    display: flex;*/
-/*    flex-wrap: wrap;*/
-/*    justify-content: space-around;*/
-/*}*/
 
 .product-detail {
     max-width: 800px;

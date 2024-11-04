@@ -69,19 +69,6 @@ def edit_profile(request):
 
     return render(request, 'shopUsers/edit_profile.html', {'form': form})
 
-    # if request.method == 'POST':
-    #     form = UserForm(request.POST, instance=request.user)
-    #     if form.is_valid():
-    #         form.save()
-    #         messages.success(request, 'Ваш профиль был успешно обновлен!')
-    #         return redirect('shopUsers:cabinet')
-    #     else:
-    #         messages.error(request, 'Пожалуйста, исправьте ошибки ниже.')
-    # else:
-    #     form = UserForm(instance=request.user)
-    #
-    # return render(request, 'shopUsers/edit_profile.html', {'form': form})
-
 
 def logout(request):
     auth_logout(request)  # Завершаем сеанс пользователя
