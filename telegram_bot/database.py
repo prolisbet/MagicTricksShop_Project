@@ -41,13 +41,6 @@ def get_admin_by_credentials(username, password):
             return admin
     return None
 
-    # conn = sqlite3.connect(DB_PATH)
-    # cursor = conn.cursor()
-    # cursor.execute("SELECT * FROM auth_user WHERE username=? AND password=?", (username, password))
-    # admin = cursor.fetchone()
-    # conn.close()
-    # return admin
-
 
 def get_orders_by_user(user_id):
     conn = sqlite3.connect(DB_PATH)
